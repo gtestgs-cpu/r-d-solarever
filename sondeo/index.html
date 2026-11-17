@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/png" href="../recursos/favicon-solarever.png">
+<link rel="apple-touch-icon" href="../recursos/favicon-solarever.png">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Sondeo a Clientes · Investigación y Desarrollo · Grupo Solarever</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:opsz,wght@6..12,400;6..12,600;6..12,700;6..12,800&display=swap" rel="stylesheet">
+<style>
+  /* Marca Solarever: Negro #1D1D1B · Blanco · Avenir Next (Nunito Sans como respaldo web) */
+  :root{
+    --negro:#1D1D1B; --negro-2:#3a3a37; --suave:#f1f1ef; --linea-n:#cfcfcb;
+    --tinta:#1D1D1B; --gris:#5f5f5b; --linea:#dddcd8; --fondo:#f5f5f3; --blanco:#FFFFFF;
+    --error:#c0392b; --error-bg:#fdf3f2; --ok:#1e7d32; --radio:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--fondo);color:var(--tinta);
+    font:16px/1.5 "Avenir Next","Avenir","Nunito Sans",-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{background:var(--negro);color:#fff;padding:22px 16px}
+  header .wrap{max-width:820px;margin:0 auto;display:flex;gap:22px;align-items:center}
+  header .logo{width:170px;height:auto;flex:none}
+  header .txt{border-left:1px solid rgba(255,255,255,.25);padding-left:22px}
+  header small{opacity:.75;letter-spacing:.08em;text-transform:uppercase;font-size:12px;font-weight:600}
+  header h1{margin:4px 0 6px;font-size:23px;line-height:1.2;font-weight:800}
+  header p{margin:0;opacity:.88;font-size:14px}
+  @media (max-width:620px){
+    header .wrap{flex-direction:column;align-items:flex-start;gap:14px}
+    header .logo{width:150px}
+    header .txt{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.25);padding-top:14px}
+    header h1{font-size:20px}
+  }
+  main{max-width:820px;margin:0 auto;padding:18px 16px 120px}
+  .card{background:var(--blanco);border:1px solid var(--linea);border-radius:var(--radio);margin:0 0 16px;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .card>h2{margin:0;padding:13px 16px;font-size:15px;background:var(--negro);color:#fff;letter-spacing:.02em;font-weight:700}
+  .card>.cuerpo{padding:16px}
+  .nota{font-size:13px;color:var(--gris);margin:0 0 12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .grid .full{grid-column:1/-1}
+  @media (max-width:620px){.grid{grid-template-columns:1fr}}
+  label.campo{display:block;font-size:13px;font-weight:700;color:#2b2b28}
+  label.campo .req{color:var(--negro)}
+  label.campo .opc{font-weight:400;color:var(--gris)}
+  input[type=text],input[type=tel],input[type=date],input[type=password],select,textarea{
+    width:100%;margin-top:5px;padding:11px 12px;font:inherit;font-size:16px;color:inherit;border:1px solid #c6c5c0;border-radius:9px;background:#fff;outline:none}
+  textarea{min-height:92px;resize:vertical}
+  ::placeholder{color:#8f8e89;opacity:1}
+  input:focus,select:focus,textarea:focus{border-color:var(--negro);box-shadow:0 0 0 3px rgba(29,29,27,.14)}
+  .invalido{border-color:var(--error)!important;background:var(--error-bg)!important}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .chips label{display:flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #c6c5c0;border-radius:999px;cursor:pointer;font-size:14px;background:#fff;user-select:none;font-weight:400}
+  .chips input{accent-color:var(--negro);margin:0}
+  .chips label:has(input:checked){border-color:var(--negro);background:var(--negro);color:#fff;font-weight:700}
+  .chips.invalido{border-radius:12px;padding:6px;outline:1px solid var(--error);background:var(--error-bg)}
+  .pregunta{margin:0 0 14px}
+  .pregunta:last-child{margin-bottom:0}
+  .eje-ayuda{font-size:13px;color:var(--gris);margin:0 0 12px;padding:8px 10px;background:var(--suave);border-radius:8px}
+  .eje-falta{display:none;color:var(--error);font-size:13px;font-weight:700;margin:0 0 10px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:10px;padding:12px 20px;font:inherit;font-weight:700;cursor:pointer}
+  .btn.prim{background:var(--negro);color:#fff}
+  .btn.prim:hover{background:var(--negro-2)}
+  .btn.sec{background:#fff;color:var(--negro);border:1px solid var(--negro)}
+  .btn.sec:hover{background:var(--suave)}
+  .btn:disabled{opacity:.55;cursor:wait}
+  .barra{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--linea);padding:12px 16px;box-shadow:0 -4px 16px rgba(0,0,0,.07);z-index:5}
+  .barra .wrap{max-width:820px;margin:0 auto;display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .barra .info{font-size:13px;color:var(--gris)}
+  .errores{display:none;background:var(--error-bg);border:1px solid #efc2bd;color:#8f2a20;border-radius:10px;padding:12px 14px;margin:0 0 16px;font-size:14px}
+  .oculto{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+  .modal{position:fixed;inset:0;background:rgba(20,20,18,.6);display:none;align-items:flex-end;justify-content:center;z-index:10}
+  .modal.abierto{display:flex}
+  .modal .caja{background:#fff;width:100%;max-width:640px;max-height:88vh;overflow:auto;border-radius:16px 16px 0 0;padding:20px}
+  @media (min-width:700px){.modal{align-items:center}.modal .caja{border-radius:16px}}
+  .modal h3{margin:0 0 6px;font-weight:800}
+  .resumen{font-size:14px;border:1px solid var(--linea);border-radius:10px;padding:10px 12px;margin:12px 0;background:#fafaf8}
+  .resumen dt{font-weight:700;margin-top:6px}
+  .resumen dd{margin:0;white-space:pre-wrap;word-break:break-word}
+  .aviso{background:var(--suave);border:1px solid var(--linea-n);border-radius:10px;padding:10px 12px;font-size:14px;margin:0 0 16px}
+  .aviso ul{margin:6px 0 0;padding-left:20px}
+  .acciones{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+  .exito,.acceso{display:none;text-align:center;background:#fff;border:1px solid var(--linea);border-radius:var(--radio);padding:30px 18px}
+  .acceso{text-align:left;max-width:460px;margin:20px auto}
+  .exito h2,.acceso h2{font-weight:800;margin-top:0}
+  .exito .folio{font-size:30px;font-weight:800;letter-spacing:.04em;margin:8px 0 4px}
+  .exito .check{width:56px;height:56px;border-radius:50%;background:var(--negro);color:#fff;display:grid;place-items:center;margin:0 auto 10px;font-size:30px;font-weight:800}
+  .cargando{padding:40px;text-align:center;color:var(--gris)}
+  footer.marca{text-align:center;color:var(--gris);font-size:12px;padding:6px 16px 0}
+  .recordar{display:flex;gap:8px;align-items:center;font-size:14px;margin:10px 0 16px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <img class="logo" alt="Solarever" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAL8AAAAuCAYAAAB50MjgAAAKu0lEQVR4Xu2cCVAVRxrHP8G7PMAbWQwqBvHGMx7ZGEWNrHgAKhCRU41HrSk3ghoEFZRFdDe1WS880FV25fAAFVBR0RWz3oJHJAoK8UBRVBQFD9z6NzXPmTfzeA/Fl1RN/6qogpnunu6Z/3xXj9awsrJ8SxyOCjFR4Zo5HAYXP0e1cPFzVAsXP0e1cPFzVAsXP0e1cPFzVAsXP0e1cPFzVAsXP0e1cPFzVAsXP0e1cPFzVAsXP0e1cPFzVEtNY6/c3r4nOTs7U506dfReOjZ2O509e5a1q127Njk7u1D37t3J1NRUse/9+4W0bdtWKii4qzkfHBxCDRo0kLRPTU2lw4cP6b2+Ep98Yk3Tp0+no0ePUkpKcqVjeHl5U+fOnQ26Tnl5OZ0/f56tWUzjxmbk7u5Obdu2pRo1alQ6VkZGBrVpY0VWVm0k7TD2mjWrKS8vT+9cXF1dKSvrIv3ySza7b25u7tShQwe91z537hwlJu6mkJBFZGJimE0tLS2luLhYunTpkt55fQyMKv6uXbtSQsIOqlWrlkFruXz5MhN/o0aNKCbm39S9ew+9/by8vMjNbQLrCzw9J8tetKKiovcW/8qVf6O+ffvS2LHjKDPzAt25c0fnnBwdHal//wF65yzg4fE1E1pYWCg7BMHHxsZRq1YWBo0B0V29epUJVhtra2tyc5tY6TgdO9rR8uUrKDJyOT19WkyxsfGsnyGYmzeho0fT2Rqqgru7B7m4OFNWVmZVulULRhU/hKgt/IsXL1JR0UPFxeTm5rDjixYtlgn/3Lmz9PTpUzIxMaVevXpR/fr1WdvGjRvTmjVrycFhKL18+bJabpIAHhSED3C9sLBl5OvrXaVrXLhwnp48ecL6tGrVimxtO0r6+/r60bp1a+nhw4e0evVamfDRNzMzk96+LZddNysri2JitpGLi6vM4wwYMJC9sLt371KcL16cyMhIdk+3b/8PrVsXJRN+SUkJs/Dl5W9kY+B5KFFa+oJOnjypOQXPbWZmrvkbEcCcOXPI29urSvexOjCq+Nu0kbpjQQAREeF07NgxxfVYWFiwhynmwIED5O/vqzk0fPhw2rBhk+Zva+u2NG6csyyEENAXPijRrFkzWrDge8kpBwcHGjnSUW/4I2bp0qV08uT/2CHMIy3tMLP2AjVr1qS+ffsx0SiFTD4+XnTmzBnFOQoEBgbQnj17ZetECIhwr7i4WNbf29uHGZhvv51N7du3p88+6y9rM2vWDDp0SHe4qOShCgsfkKfnJM1YCHsTE5MkY1fFO1YnhgVn1URR0SPZSM2bN6etW2MoKGihYjgEgWmLVdvKiC2LgIuLC/v17dvq+SfK8D7wKtosXrxEllMI6Ls2zhcW3peNiTDPwWGY7PibN2+Y5dUHQojNm6NlzfACBwQEyo5bWlqy48ePH6edO3foHP706dP6Lq0XcT4mUK9ePZbTGRujWv4jRw7TqFGjZGuEuKdOncYsAKzLjRs3NG0+/dRW1h6uWcyzZ89kbXr27KUzt6iq5f/ii8E0evQYunfvHrVs2VJyLYQugYHzaOHCIIOeHa4dFBRM9evXY2JEOKINkk1X1/Gy4y9evKCGDRtSQMA8EnJfJMn29vasLax6Wloa+x1xO7wS5icGoWdcXJwkxl62LJyFPfPnz2NNkTcoUVZWRmFhSzUJ7aFDaTR0qANr+tNPJ+jUKfnLgfUitEMuBvr06SMb+ubNm9UeohqCUcUPq4K4uXfv3opzQ0KckrKfgoMXsioAULK2RFJrjmqGNrAklpZ/MOQeVErdunWZOFApcXEZR8nJqdSiRQuZoBISElgCbAiTJ3tS3br1FJvCQCDJNzMzUzwPT+np6ak5B6sphIUwCoL4YRBwH6Oi1kvGgRixntGjR7H7NmbMWPryyyG0fHkE5eXdZG0R2yuBF2/y5HexeWFhIU2a9G4uSuIHHTrYSNpps2JFpCG3rdoxatgDt+3p+TUlJUljPjFIJFesWMnCDIBymDZIcg1B+cWpiLUNZc6cv5CVlRXNnx9I9+/fp9DQJQrzMaGIiAhZCVZX2LNp07v8RABWNTx8GU2Z4q9z3Zj3o0ePWHiSkVHxc+3aNc3v169fk8wtNTVF8zKI6datG/MA5ubmLGzLzr7KkmwBXaVkvFzIzYRr//prvub37Oxsnbf04ME0ys/Pl53/+ecrNGmSByUlJers+zExquUHsCoIbVAWCw0N01RptEHV4/jx/7IbrI22eHXVlREm6Iu7K8POrhP5+0+h+Ph4JjiAWvbEiW40aNAgSddOnTqTn58/RUWtq3RMzP2HH/5OTk6j2UslgKpHTk6Oxv3fvn2LeUIx6IsqkIeHm+T46tWrdF5z4cLvaeDAgcxDiEGM//nnf2QvACpWr1690pwWz0sMjBfEKgYeT0A7JASYc1lZKQsLt2z5l6QvvJuwj/NbYFTLLyY+Po5GjhxR6QbH+PETFBM8uF8x2ptYAA8qPz9Plh8AQ5IrPDRY88ePH9OSJRVeSCAoaIFijAovgeRRH/BmSjlCaGioxhgoiQICRjWoKty+fVsxrMA9RJVs69atsnssrj6JQSL+viCcS07eJ+luYdGavvtu7vsO+cH8ZuIHSGzHjHGi9eujFC10u3bt6NSpU2xTSgwsshhYXW1QFYHIhL0CMTY270qLukBs26OHPYWEBNOTJ48lzXJzc2nt2ndhgkBF7X+p5m+lQpPgtZCcau8Qi8WAXWht0NfOzk7nnHWxadNGunKlYtNPDBJ4lJmV7t3r169lxzt1kt53bZS8rNhLh4SEyIoTKLF26dKlymuqDqpmRj4QiFZpoagu7N27l5ycnCRXePashLnjjRs30Ny5AZpzI0aMoBkzZrKEC5bQ21u+0YTPHEB6erqsZo2QBeOhyqANLJSpaU1WwUFZDgkvPJCYGzdy6ccf/0Fjx46V7V2g+uHo+CeZlVMiODiYhR5iz+Xj40s7diSwHer9+/eztYpBshoTE8M8mzaYl9IeANoGBgZSUtIeiRiREGtXzsCDBw9o586dNGGCdN34dCE6OloSIgncunWLcnKuV6qQe/cKmBcS8jmA/CI8PIIl4B8Sor4PNYz5f3VikwUxtKFERPyVVq36J4uHd+1KNNhCoATn6+vDbiZcNTaStEt+ukDCiT2Cr74aqbMNRDllih8NGTKUNm/eImtXUFBAQ4YMpqioDbLcwN19IvsGRwB5AkQlBju4EEPr1q1p374UatKkiUG3DJ5k2rSpOtsix8L3RuDgwYPk5+ejs23Tpk0pOTmFeSNDQBI8e/af6cwZ6T7E3bt3qF+/il1xgPxsz559snwGHjY6Wl4I+JgYNex5/vw5C0X0/cAa4QMvIXlEJQRJHrbmcU5Xf4gOyd8330zTWBHsZuJbHyTYKP/pu7aNjQ0NHjy40nYlJRX7CghdYKWxGyseF4kcvq/B9zHS671gSbgYPPATJzIk7WxtbWnYsOEsXnd1dWY1dPTTN3ddJUoBlDPhHeAxkQhXBhJrV1cXSk8/YtBzKyl5TmVlL2Vti4ulezIorwYGzmWhrHg9M2fOMviDuOrCqJafw/k9YVTLz+H8nuDi56gWLn6OauHi56gWLn6OauHi56gWLn6OauHi56gWLn6OauHi56gWLn6OauHi56gWLn6OauHi56gWLn6Oavk/Y6Xbht1XqaUAAAAASUVORK5CYII=">
+    <div class="txt">
+      <small>Departamento de Investigación y Desarrollo · GS-ID-RG-01</small>
+      <h1>Sondeo a Clientes</h1>
+      <p>Formato para registrar las necesidades, inconvenientes y oportunidades que el cliente identifica en el uso de su sistema fotovoltaico. La información se integra a la App I+D para su análisis. Tiempo estimado: 15 a 20 minutos. Los campos marcados con <b>*</b> son obligatorios.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div id="errores" class="errores" role="alert"></div>
+
+  <div id="acceso" class="acceso">
+    <h2>Acceso al formulario</h2>
+    <p class="nota">Ingrese el código de acceso proporcionado por el Departamento de Investigación y Desarrollo. Si no cuenta con él, solicítelo a dicho departamento.</p>
+    <label class="campo">Código de acceso <span class="req">*</span><input type="text" id="codigo" autocomplete="off" autocapitalize="characters" spellcheck="false"></label>
+    <label class="recordar"><input type="checkbox" id="recordar" checked> Recordar el código en este dispositivo</label>
+    <div class="acciones"><button type="button" class="btn prim" id="entrar">Continuar</button></div>
+  </div>
+  <div id="cargando" class="cargando" style="display:none">Cargando el formulario…</div>
+
+  <form id="f" novalidate style="display:none">
+    <input type="text" name="_web" class="oculto" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <section class="card">
+      <h2>Datos de quien aplica el sondeo</h2>
+      <div class="cuerpo grid">
+        <label class="campo">Nombre completo <span class="req">*</span>
+          <input type="text" name="persona" list="listaPersonas" autocomplete="name" required></label>
+        <datalist id="listaPersonas"></datalist>
+        <label class="campo">Puesto <span class="opc">(opcional)</span>
+          <input type="text" name="puesto" placeholder="Ejemplo: Asesor comercial"></label>
+        <div class="campo full"><label class="campo">Área <span class="req">*</span></label><div class="chips" id="area"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>1. Datos del sondeo</h2>
+      <div class="cuerpo grid">
+        <label class="campo">Fecha de aplicación <span class="req">*</span><input type="date" name="fecha" required></label>
+        <div class="campo"><label class="campo">Medio de contacto <span class="req">*</span></label><div class="chips" id="medio"></div></div>
+        <label class="campo full">Nombre del cliente o contacto <span class="req">*</span><input type="text" name="clienteNombre" required autocomplete="off"></label>
+        <label class="campo">Empresa <span class="opc">(opcional)</span><input type="text" name="clienteEmpresa" autocomplete="off"></label>
+        <label class="campo">Teléfono <span class="opc">(opcional)</span><input type="tel" name="clienteTelefono" inputmode="tel" autocomplete="off"></label>
+        <label class="campo">Ciudad <span class="req">*</span><input type="text" name="clienteCiudad" required></label>
+        <label class="campo">Estado <span class="opc">(opcional)</span><select name="clienteEstado" id="estado"><option value="">Seleccione…</option></select></label>
+        <div class="campo full"><label class="campo">Tipo de cliente <span class="req">*</span></label><div class="chips" id="tipoCliente"></div></div>
+        <div class="campo full"><label class="campo">Tipo de instalación <span class="opc">(opcional)</span></label><div class="chips" id="tipoInstalacion"></div></div>
+        <label class="campo full">Equipos instalados y antigüedad del sistema <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Ejemplo: inversor híbrido de 6 kW y dos baterías; instalado hace dos años"></label>
+        <label class="recordar full"><input type="checkbox" name="contactable" checked> El cliente autoriza ser contactado nuevamente por el Departamento de Investigación y Desarrollo</label>
+      </div>
+    </section>
+
+    <div class="aviso"><b>Lineamientos para la entrevista</b>
+      <ul>
+        <li>Pregunte por hechos concretos y recientes (la última ocasión, la semana pasada), no por opiniones ni intenciones futuras.</li>
+        <li>No proponga soluciones ni mencione productos; escuche y solicite ejemplos (por ejemplo: “¿Podría describir la última vez que ocurrió?”).</li>
+        <li>Registre frases textuales del cliente. Una molestia recurrente es tan relevante como una falla.</li>
+        <li>Responda <b>al menos una</b> pregunta de cada sección.</li>
+      </ul>
+    </div>
+
+    <div id="ejes"></div>
+
+    <p class="nota">La sección 8 (Señales detectadas) es completada por el Departamento de Investigación y Desarrollo durante el análisis del sondeo. Los datos personales del cliente se utilizan únicamente para seguimiento interno y no se comparten con fabricantes.</p>
+  </form>
+
+  <div id="exito" class="exito">
+    <div class="check">✓</div>
+    <h2>Sondeo registrado</h2>
+    <div>Folio</div>
+    <div class="folio" id="folio"></div>
+    <p>El sondeo quedó registrado en la App I+D. El Departamento de Investigación y Desarrollo dará seguimiento a la información. Gracias por su colaboración.</p>
+    <div class="acciones" style="justify-content:center"><button type="button" class="btn prim" id="otro">Registrar un nuevo sondeo</button></div>
+  </div>
+  <footer class="marca">Grupo Solarever, S.A. de C.V. · Departamento de Investigación y Desarrollo</footer>
+</main>
+
+<div class="barra" id="barra" style="display:none">
+  <div class="wrap">
+    <span class="info" id="progreso">Complete los campos marcados con *</span>
+    <button type="button" class="btn prim" id="revisar">Revisar y enviar</button>
+  </div>
+</div>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="caja">
+    <h3>Revise la información antes de enviarla</h3>
+    <dl class="resumen" id="resumen"></dl>
+    <div class="acciones">
+      <button type="button" class="btn sec" id="corregir">Corregir</button>
+      <button type="button" class="btn prim" id="enviar">Enviar sondeo</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Conexión con la App I+D (Apps Script). Si cambia la URL de la implementación, cámbiela aquí: ===== */
+var API_URL = 'PEGAR_AQUI_LA_URL_DE_LA_APP_ID';
+function llamar(accion, datos) {
+  return fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: accion, datos: datos }) })
+    .catch(function () { throw new Error('No fue posible conectar con el servidor. Verifique su conexión a internet e intente nuevamente'); })
+    .then(function (x) { return x.json(); })
+    .then(function (j) { if (j.ok) return j.data; throw new Error(j.error || 'Error desconocido'); });
+}
+</script>
+<script>
+(function(){
+  var $ = function(s,c){return (c||document).querySelector(s)};
+  var $$ = function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+  var form = $('#f'), CFG = null, CODIGO = '';
+  var CLAVE_BORRADOR = 'solarever_sondeo_borrador_v1', CLAVE_CODIGO = 'solarever_sondeo_codigo', CLAVE_PERSONA = 'solarever_sondeo_persona';
+  var AYUDA = { 'Comodidad': 'Actividades que consumen tiempo, resultan incómodas u obligan a improvisar durante el uso o la instalación del sistema.',
+    'Costos': 'Gastos no previstos, compras adicionales y dudas sobre el ahorro o el rendimiento económico del sistema.',
+    'Eficiencia': 'Situaciones en las que el sistema genera o respalda menos energía de lo esperado y la forma en que el cliente lo detecta.',
+    'Instalación y mantenimiento': 'Actividades que exceden el tiempo planeado, piezas o herramientas improvisadas y servicios recurrentes.',
+    'Seguridad y confianza': 'Dudas, preocupaciones y aspectos del sistema que el cliente no comprende o en los que no confía.',
+    'Cierre': 'Preguntas para concluir la entrevista.' };
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v);}catch(e){ return null; } }
+  function error(msg){ var b=$('#errores'); b.textContent=msg; b.style.display=msg?'block':'none'; if(msg) b.scrollIntoView({behavior:'smooth',block:'center'}); }
+  function hoy(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().substring(0,10); }
+
+  function chips(id, opciones){
+    $('#'+id).innerHTML = opciones.map(function(o){ return '<label><input type="radio" name="'+id+'" value="'+esc(o)+'"> '+esc(o)+'</label>'; }).join('');
+  }
+  function valorChip(id){ var x=$('input[name="'+id+'"]:checked'); return x?x.value:''; }
+
+  function pintarEjes(){
+    var n = 1;
+    $('#ejes').innerHTML = CFG.ejes.map(function(g){
+      n++;
+      return '<section class="card" data-eje="'+esc(g.eje)+'"><h2>'+n+'. '+esc(g.eje.toUpperCase())+'</h2><div class="cuerpo">' +
+        '<p class="eje-ayuda">'+esc(AYUDA[g.eje]||'')+'</p><p class="eje-falta">Responda al menos una pregunta de esta sección.</p>' +
+        g.preguntas.map(function(p){ return '<label class="campo pregunta">'+esc(p.t)+'<textarea name="r_'+esc(p.k)+'" placeholder="Registre las palabras del cliente"></textarea></label>'; }).join('') +
+        '</div></section>';
+    }).join('');
+  }
+
+  function datos(){
+    var fd = new FormData(form), r = {};
+    CFG.ejes.forEach(function(g){ g.preguntas.forEach(function(p){ r[p.k] = (fd.get('r_'+p.k)||'').trim(); }); });
+    return { codigo: CODIGO, website: fd.get('_web')||'', persona: (fd.get('persona')||'').trim(), puesto: (fd.get('puesto')||'').trim(), area: valorChip('area'),
+      fecha: fd.get('fecha')||'', medio: valorChip('medio'), tipoCliente: valorChip('tipoCliente'), tipoInstalacion: valorChip('tipoInstalacion'),
+      equipos: (fd.get('equipos')||'').trim(),
+      cliente: { nombre: (fd.get('clienteNombre')||'').trim(), empresa: (fd.get('clienteEmpresa')||'').trim(), telefono: (fd.get('clienteTelefono')||'').trim(),
+        ciudad: (fd.get('clienteCiudad')||'').trim(), estado: fd.get('clienteEstado')||'', contactable: !!fd.get('contactable') },
+      respuestas: r };
+  }
+
+  function guardarBorrador(){
+    if(!CFG) return;
+    var d = datos(); delete d.codigo; delete d.website;
+    ls(CLAVE_BORRADOR, JSON.stringify(d));
+    progreso();
+  }
+  function cargarBorrador(){
+    var t = ls(CLAVE_BORRADOR), d;
+    try{ d = t ? JSON.parse(t) : null; }catch(e){ d = null; }
+    var persona = null; try{ persona = JSON.parse(ls(CLAVE_PERSONA)||'null'); }catch(e){}
+    if(!d && persona) d = { persona: persona.persona, puesto: persona.puesto, area: persona.area };
+    if(!d) return;
+    function setV(n,v){ var x=form.elements[n]; if(x && v!=null) x.value=v; }
+    function setC(id,v){ var x=v && $('input[name="'+id+'"][value="'+CSS.escape(v)+'"]'); if(x) x.checked=true; }
+    setV('persona', d.persona); setV('puesto', d.puesto); setC('area', d.area);
+    if(d.fecha) setV('fecha', d.fecha); setC('medio', d.medio); setC('tipoCliente', d.tipoCliente); setC('tipoInstalacion', d.tipoInstalacion);
+    setV('equipos', d.equipos);
+    if(d.cliente){ setV('clienteNombre', d.cliente.nombre); setV('clienteEmpresa', d.cliente.empresa); setV('clienteTelefono', d.cliente.telefono); setV('clienteCiudad', d.cliente.ciudad); setV('clienteEstado', d.cliente.estado); form.elements.contactable.checked = d.cliente.contactable !== false; }
+    if(d.respuestas) Object.keys(d.respuestas).forEach(function(k){ setV('r_'+k, d.respuestas[k]); });
+  }
+
+  function faltantes(d){
+    var f = [];
+    $$('.invalido').forEach(function(x){ x.classList.remove('invalido'); });
+    $$('.eje-falta').forEach(function(x){ x.style.display='none'; });
+    function marca(sel, txt){ var x=$(sel); if(x) x.classList.add('invalido'); f.push(txt); }
+    if(!d.persona) marca('[name=persona]','Nombre completo');
+    if(!d.area) marca('#area','Área');
+    if(!d.fecha) marca('[name=fecha]','Fecha de aplicación'); else if(d.fecha > hoy()) marca('[name=fecha]','Fecha de aplicación (no puede ser posterior a hoy)');
+    if(!d.medio) marca('#medio','Medio de contacto');
+    if(!d.cliente.nombre) marca('[name=clienteNombre]','Nombre del cliente o contacto');
+    if(!d.cliente.ciudad) marca('[name=clienteCiudad]','Ciudad');
+    if(!d.tipoCliente) marca('#tipoCliente','Tipo de cliente');
+    CFG.ejes.forEach(function(g){
+      if(g.eje === 'Cierre') return;
+      var ok = g.preguntas.some(function(p){ return d.respuestas[p.k]; });
+      if(!ok){ var s=$('section[data-eje="'+CSS.escape(g.eje)+'"]'); $('.eje-falta', s).style.display='block'; f.push('sección '+g.eje); }
+    });
+    return f;
+  }
+  function progreso(){
+    var d = datos(), ejes = CFG.ejes.filter(function(g){ return g.eje!=='Cierre'; });
+    var listos = ejes.filter(function(g){ return g.preguntas.some(function(p){ return d.respuestas[p.k]; }); }).length;
+    $('#progreso').textContent = 'Secciones respondidas: '+listos+' de '+ejes.length;
+  }
+  function resumen(d){
+    var h = '<dt>Aplicado por</dt><dd>'+esc(d.persona)+(d.puesto?' · '+esc(d.puesto):'')+' · '+esc(d.area)+'</dd>' +
+      '<dt>Cliente</dt><dd>'+esc(d.cliente.nombre)+(d.cliente.empresa?' · '+esc(d.cliente.empresa):'')+' · '+esc(d.cliente.ciudad)+(d.cliente.estado?', '+esc(d.cliente.estado):'')+' · '+esc(d.tipoCliente)+'</dd>' +
+      '<dt>Fecha y medio de contacto</dt><dd>'+esc(d.fecha)+' · '+esc(d.medio)+'</dd>';
+    CFG.ejes.forEach(function(g){
+      var rs = g.preguntas.filter(function(p){ return d.respuestas[p.k]; });
+      if(rs.length) h += '<dt>'+esc(g.eje)+'</dt><dd>'+rs.map(function(p){ return '• '+esc(d.respuestas[p.k]); }).join('\n')+'</dd>';
+    });
+    return h;
+  }
+
+  function iniciar(cfg){
+    CFG = cfg;
+    chips('area', cfg.areas); chips('medio', cfg.medios); chips('tipoCliente', cfg.tiposCliente); chips('tipoInstalacion', cfg.tiposInstalacion);
+    $('#estado').innerHTML = '<option value="">Seleccione…</option>' + (cfg.estados||[]).map(function(e){ return '<option>'+esc(e)+'</option>'; }).join('');
+    $('#listaPersonas').innerHTML = (cfg.personas||[]).map(function(p){ return '<option value="'+esc(p.nombre)+'">'+esc([p.puesto,p.area].filter(String).join(' · '))+'</option>'; }).join('');
+    pintarEjes();
+    form.elements.fecha.value = hoy(); form.elements.fecha.max = hoy();
+    cargarBorrador();
+    form.addEventListener('input', guardarBorrador); form.addEventListener('change', guardarBorrador);
+    form.elements.persona.addEventListener('change', function(){
+      var n = this.value.trim().toLowerCase(), p = (CFG.personas||[]).filter(function(x){ return x.nombre.toLowerCase()===n; })[0];
+      if(!p) return;
+      if(!form.elements.puesto.value && p.puesto) form.elements.puesto.value = p.puesto;
+      if(!valorChip('area') && p.area){ var x=$('input[name="area"][value="'+CSS.escape(p.area)+'"]'); if(x) x.checked=true; }
+    });
+    $('#acceso').style.display='none'; $('#cargando').style.display='none';
+    form.style.display='block'; $('#barra').style.display='block';
+    progreso();
+  }
+
+  function entrar(codigo, silencioso){
+    CODIGO = String(codigo||'').trim().toUpperCase();
+    if(!CODIGO){ if(!silencioso) error('Ingrese el código de acceso.'); return; }
+    error(''); $('#acceso').style.display='none'; $('#cargando').style.display='block';
+    llamar('config', { codigo: CODIGO }).then(function(cfg){
+      if($('#recordar').checked) ls(CLAVE_CODIGO, CODIGO);
+      iniciar(cfg);
+    }).catch(function(err){
+      ls(CLAVE_CODIGO, null);
+      $('#cargando').style.display='none'; $('#acceso').style.display='block';
+      error(err.message);
+    });
+  }
+  $('#entrar').addEventListener('click', function(){ entrar($('#codigo').value); });
+  $('#codigo').addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); entrar(this.value); } });
+
+  var modal = $('#modal');
+  $('#revisar').addEventListener('click', function(){
+    var d = datos(), f = faltantes(d);
+    if(f.length){ error('Complete los siguientes campos: ' + f.join(', ') + '.'); return; }
+    error(''); $('#resumen').innerHTML = resumen(d); modal.classList.add('abierto');
+  });
+  $('#corregir').addEventListener('click', function(){ modal.classList.remove('abierto'); });
+
+  var enviando = false;
+  $('#enviar').addEventListener('click', function(){
+    if(enviando) return; enviando = true;
+    var b = this; b.disabled = true; b.textContent = 'Enviando…';
+    var d = datos();
+    llamar('enviar', d).then(function(r){
+      ls(CLAVE_BORRADOR, null);
+      ls(CLAVE_PERSONA, JSON.stringify({ persona: d.persona, puesto: d.puesto, area: d.area }));
+      modal.classList.remove('abierto');
+      form.style.display='none'; $('#barra').style.display='none'; error('');
+      $('#folio').textContent = r.folio; $('#exito').style.display='block';
+      window.scrollTo(0,0);
+    }).catch(function(err){
+      modal.classList.remove('abierto');
+      error('No fue posible enviar el sondeo: ' + err.message + '. La información permanece guardada en este dispositivo; intente nuevamente.');
+    }).then(function(){ enviando = false; b.disabled = false; b.textContent = 'Enviar sondeo'; });
+  });
+  $('#otro').addEventListener('click', function(){ window.location.reload(); });
+
+  var guardado = ls(CLAVE_CODIGO);
+  if(guardado){ $('#codigo').value = guardado; entrar(guardado, true); } else { $('#acceso').style.display='block'; }
+  if(API_URL.indexOf('PEGAR_AQUI') === 0){ error('El formulario aún no está vinculado con la App I+D. Comuníquese con el Departamento de Investigación y Desarrollo.'); }
+})();
+</script>
+</body>
+</html>
