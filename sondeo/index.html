@@ -50,8 +50,9 @@
   ::placeholder{color:#8f8e89;opacity:1}
   input:focus,select:focus,textarea:focus{border-color:var(--negro);box-shadow:0 0 0 3px rgba(29,29,27,.14)}
   .invalido{border-color:var(--error)!important;background:var(--error-bg)!important}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
-  .chips label{display:flex;align-items:center;gap:8px;padding:9px 13px;border:1px solid #c6c5c0;border-radius:999px;cursor:pointer;font-size:14px;background:#fff;user-select:none;font-weight:400}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chips label{font-size:13.5px}
+  .chips label{display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid #c6c5c0;border-radius:999px;cursor:pointer;font-size:14px;background:#fff;user-select:none;font-weight:400}
   .chips input{accent-color:var(--negro);margin:0}
   .chips label:has(input:checked){border-color:var(--negro);background:var(--negro);color:#fff;font-weight:700}
   .chips.invalido{border-radius:12px;padding:6px;outline:1px solid var(--error);background:var(--error-bg)}
@@ -150,7 +151,7 @@
         <datalist id="listaPersonas"></datalist>
         <label class="campo">Puesto <span class="opc">(opcional)</span>
           <input type="text" name="puesto" placeholder="Ejemplo: Asesor comercial"></label>
-        <div class="campo full"><label class="campo">Área <span class="req">*</span></label><div class="chips" id="area"></div></div>
+        <label class="campo">Área <span class="req">*</span><select id="area" name="area"></select></label>
       </div>
     </section>
 
@@ -158,15 +159,15 @@
       <h2>1. Datos del sondeo</h2>
       <div class="cuerpo grid">
         <label class="campo">Fecha de aplicación <span class="req">*</span><input type="date" name="fecha" required></label>
-        <div class="campo"><label class="campo">Medio de contacto <span class="req">*</span></label><div class="chips" id="medio"></div></div>
+        <div class="campo full"><label class="campo">Medio de contacto <span class="req">*</span></label><div class="chips" id="medio"></div></div>
         <label class="campo full">Nombre del cliente o contacto <span class="req">*</span><input type="text" name="clienteNombre" required autocomplete="off"></label>
         <label class="campo">Empresa <span class="opc">(opcional)</span><input type="text" name="clienteEmpresa" autocomplete="off"></label>
         <label class="campo">Teléfono <span class="opc">(opcional)</span><input type="tel" name="clienteTelefono" inputmode="tel" autocomplete="off"></label>
         <label class="campo">Ciudad <span class="req">*</span><input type="text" name="clienteCiudad" required></label>
         <label class="campo">Estado <span class="opc">(opcional)</span><select name="clienteEstado" id="estado"><option value="">Seleccione…</option></select></label>
-        <div class="campo full"><label class="campo">Tipo de cliente <span class="req">*</span></label><div class="chips" id="tipoCliente"></div></div>
-        <div class="campo full"><label class="campo">Tipo de instalación <span class="opc">(opcional)</span></label><div class="chips" id="tipoInstalacion"></div></div>
-        <label class="campo full">Equipos que instala con más frecuencia y antigüedad de sus instalaciones <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Ejemplo: inversores híbridos de 6 kW con baterías; instalaciones de 1 a 3 años"></label>
+        <label class="campo">Tipo de cliente <span class="req">*</span><select id="tipoCliente" name="tipoCliente"></select></label>
+        <label class="campo">Tipo de instalación <span class="opc">(opcional)</span><select id="tipoInstalacion" name="tipoInstalacion"></select></label>
+        <label class="campo full">Equipos y antigüedad <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Equipos que instala con más frecuencia y antigüedad de sus instalaciones. Ejemplo: inversores híbridos de 6 kW; de 1 a 3 años"></label>
         <label class="recordar full"><input type="checkbox" name="contactable" checked> El cliente autoriza ser contactado nuevamente por el Departamento de Investigación y Desarrollo</label>
       </div>
     </section>
@@ -260,7 +261,8 @@ function llamar(accion, datos) {
   function chips(id, opciones){
     $('#'+id).innerHTML = opciones.map(function(o){ return '<label><input type="radio" name="'+id+'" value="'+esc(o)+'"> '+esc(o)+'</label>'; }).join('');
   }
-  function valorChip(id){ var x=$('input[name="'+id+'"]:checked'); return x?x.value:''; }
+  function lista(id, opciones){ $('#'+id).innerHTML = '<option value="">Seleccione…</option>' + opciones.map(function(o){ return '<option>'+esc(o)+'</option>'; }).join(''); }
+  function valorChip(id){ var el=$('#'+id); if(el && el.tagName==='SELECT') return el.value; var x=$('input[name="'+id+'"]:checked'); return x?x.value:''; }
 
   function pintarEjes(){
     var n = 1;
@@ -337,7 +339,7 @@ function llamar(accion, datos) {
     if(!d && persona) d = { persona: persona.persona, puesto: persona.puesto, area: persona.area };
     if(!d) return;
     function setV(n,v){ var x=form.elements[n]; if(x && v!=null) x.value=v; }
-    function setC(id,v){ var x=v && $('input[name="'+id+'"][value="'+CSS.escape(v)+'"]'); if(x) x.checked=true; }
+    function setC(id,v){ var el=$('#'+id); if(el && el.tagName==='SELECT'){ if(v) el.value=v; return; } var x=v && $('input[name="'+id+'"][value="'+CSS.escape(v)+'"]'); if(x) x.checked=true; }
     setV('persona', d.persona); setV('puesto', d.puesto); setC('area', d.area);
     if(d.fecha) setV('fecha', d.fecha); setC('medio', d.medio); setC('tipoCliente', d.tipoCliente); setC('tipoInstalacion', d.tipoInstalacion);
     setV('equipos', d.equipos);
@@ -409,7 +411,7 @@ function llamar(accion, datos) {
 
   function iniciar(cfg){
     CFG = cfg;
-    chips('area', cfg.areas); chips('medio', cfg.medios); chips('tipoCliente', cfg.tiposCliente); chips('tipoInstalacion', cfg.tiposInstalacion);
+    lista('area', cfg.areas); chips('medio', cfg.medios); lista('tipoCliente', cfg.tiposCliente); lista('tipoInstalacion', cfg.tiposInstalacion);
     $('#estado').innerHTML = '<option value="">Seleccione…</option>' + (cfg.estados||[]).map(function(e){ return '<option>'+esc(e)+'</option>'; }).join('');
     $('#listaPersonas').innerHTML = (cfg.personas||[]).map(function(p){ return '<option value="'+esc(p.nombre)+'">'+esc([p.puesto,p.area].filter(String).join(' · '))+'</option>'; }).join('');
     pintarEjes();
@@ -425,7 +427,7 @@ function llamar(accion, datos) {
       var n = this.value.trim().toLowerCase(), p = (CFG.personas||[]).filter(function(x){ return x.nombre.toLowerCase()===n; })[0];
       if(!p) return;
       if(!form.elements.puesto.value && p.puesto) form.elements.puesto.value = p.puesto;
-      if(!valorChip('area') && p.area){ var x=$('input[name="area"][value="'+CSS.escape(p.area)+'"]'); if(x) x.checked=true; }
+      if(!valorChip('area') && p.area){ $('#area').value = p.area; }
     });
     $('#acceso').style.display='none'; $('#cargando').style.display='none';
     form.style.display='block'; $('#barra').style.display='block';
