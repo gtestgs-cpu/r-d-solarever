@@ -192,7 +192,7 @@
 
 <script>
 /* ===== Conexión con la App I+D (Apps Script). Si cambia la URL de la implementación, cámbiela aquí: ===== */
-var API_URL = 'PEGAR_AQUI_LA_URL_DE_LA_APP_ID';
+var API_URL = 'https://script.google.com/macros/s/AKfycbxul0u7M77kzsEpg66hYVJQ36QtFywnHhjidqJOPhB3CyH9XxxV3WInAo_vFjDCF3Tn/exec';
 function llamar(accion, datos) {
   return fetch(API_URL, { method: 'POST', credentials: 'omit', redirect: 'follow',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ accion: accion, datos: datos }) })
