@@ -89,6 +89,20 @@
   .cargando{padding:40px;text-align:center;color:var(--gris)}
   footer.marca{text-align:center;color:var(--gris);font-size:12px;padding:6px 16px 0}
   .recordar{display:flex;gap:8px;align-items:center;font-size:14px;margin:10px 0 16px}
+  .modo{display:grid;gap:10px;grid-template-columns:1fr 1fr}
+  @media (max-width:640px){.modo{grid-template-columns:1fr}}
+  .modo label{display:block;border:1px solid #c6c5c0;border-radius:12px;padding:12px 14px;cursor:pointer;background:#fff;font-size:14px}
+  .modo label b{display:block;font-size:15px;margin-bottom:3px}
+  .modo label span{color:var(--gris)}
+  .modo input{position:absolute;opacity:0;pointer-events:none}
+  .modo label:has(input:checked){border-color:var(--negro);box-shadow:0 0 0 2px var(--negro)}
+  .bloque{border:1px solid var(--linea);border-radius:12px;padding:14px;margin:0 0 12px;position:relative}
+  .bloque h3{margin:0 0 10px;font-size:14px}
+  .bloque .quitar{position:absolute;top:10px;right:10px;background:none;border:0;font:inherit;font-size:13px;color:var(--gris);cursor:pointer;text-decoration:underline}
+  .fila3{display:grid;gap:10px;grid-template-columns:2fr 2fr 1.3fr auto;align-items:end;margin-bottom:10px}
+  @media (max-width:640px){.fila3{grid-template-columns:1fr}}
+  .fila3 .quitar{background:none;border:0;font:inherit;font-size:13px;color:var(--gris);cursor:pointer;text-decoration:underline;padding:10px 0}
+  .btn.chico{padding:9px 14px;font-size:14px}
 </style>
 </head>
 <body>
@@ -98,7 +112,7 @@
     <div class="txt">
       <small>Departamento de Investigación y Desarrollo · GS-ID-RG-01</small>
       <h1>Sondeo a Clientes</h1>
-      <p>Formato para registrar las necesidades, inconvenientes y oportunidades que el cliente identifica en el uso de su sistema fotovoltaico. La información se integra a la App I+D para su análisis. Tiempo estimado: 15 a 20 minutos. Los campos marcados con <b>*</b> son obligatorios.</p>
+      <p>Formato para registrar las necesidades, inconvenientes y oportunidades que el cliente identifica en sus proyectos de instalación fotovoltaica, antes, durante y después de instalar. La información se integra a la App I+D para su análisis. Tiempo estimado: sondeo completo, 15 a 20 minutos; registro breve, 2 a 5 minutos. Los campos marcados con <b>*</b> son obligatorios.</p>
     </div>
   </div>
 </header>
@@ -117,6 +131,16 @@
 
   <form id="f" novalidate style="display:none">
     <input type="text" name="_web" class="oculto" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <section class="card">
+      <h2>Tipo de registro</h2>
+      <div class="cuerpo">
+        <div class="modo" id="modalidad">
+          <label><input type="radio" name="modalidad" value="Completo" checked><b>Sondeo completo</b><span>Entrevista con las preguntas de las cinco secciones (15 a 20 minutos).</span></label>
+          <label><input type="radio" name="modalidad" value="Breve"><b>Registro breve de una idea o necesidad</b><span>Para registrar lo que un cliente comentó en una llamada o visita, sin realizar la entrevista completa (2 a 5 minutos).</span></label>
+        </div>
+      </div>
+    </section>
 
     <section class="card">
       <h2>Datos de quien aplica el sondeo</h2>
@@ -142,12 +166,27 @@
         <label class="campo">Estado <span class="opc">(opcional)</span><select name="clienteEstado" id="estado"><option value="">Seleccione…</option></select></label>
         <div class="campo full"><label class="campo">Tipo de cliente <span class="req">*</span></label><div class="chips" id="tipoCliente"></div></div>
         <div class="campo full"><label class="campo">Tipo de instalación <span class="opc">(opcional)</span></label><div class="chips" id="tipoInstalacion"></div></div>
-        <label class="campo full">Equipos instalados y antigüedad del sistema <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Ejemplo: inversor híbrido de 6 kW y dos baterías; instalado hace dos años"></label>
+        <label class="campo full">Equipos que instala con más frecuencia y antigüedad de sus instalaciones <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Ejemplo: inversores híbridos de 6 kW con baterías; instalaciones de 1 a 3 años"></label>
         <label class="recordar full"><input type="checkbox" name="contactable" checked> El cliente autoriza ser contactado nuevamente por el Departamento de Investigación y Desarrollo</label>
       </div>
     </section>
 
-    <div class="aviso"><b>Lineamientos para la entrevista</b>
+    <section class="card" id="breve" style="display:none">
+      <h2>2. Idea o necesidad comentada</h2>
+      <div class="cuerpo">
+        <p class="eje-ayuda">Registre la idea o necesidad tal como la expresó el cliente y, si lo mencionó, qué problema le resolvería. No proponga soluciones ni mencione productos.</p>
+        <div id="ideas"></div>
+        <button type="button" class="btn sec chico" id="masIdea">+ Agregar otra idea o necesidad</button>
+        <h3 style="margin:22px 0 4px;font-size:15px">Otros clientes que comentaron lo mismo <span class="opc" style="font-weight:400;color:var(--gris)">(opcional)</span></h3>
+        <p class="nota" style="margin:0 0 10px">El Departamento de Investigación y Desarrollo confirmará la necesidad con cada uno de ellos; solo entonces se considerarán como evidencia.</p>
+        <div id="otros"></div>
+        <button type="button" class="btn sec chico" id="masOtro">+ Agregar cliente</button>
+        <label class="campo" style="margin-top:18px;max-width:340px">Clientes no identificados que lo comentaron <span class="opc">(opcional)</span>
+          <input type="text" name="noIdentificados" inputmode="numeric" placeholder="Ejemplo: 3"></label>
+      </div>
+    </section>
+
+    <div class="aviso" id="lineamientos"><b>Lineamientos para la entrevista</b>
       <ul>
         <li>Pregunte por hechos concretos y recientes (la última ocasión, la semana pasada), no por opiniones ni intenciones futuras.</li>
         <li>No proponga soluciones ni mencione productos; escuche y solicite ejemplos (por ejemplo: “¿Podría describir la última vez que ocurrió?”).</li>
@@ -163,7 +202,7 @@
 
   <div id="exito" class="exito">
     <div class="check">✓</div>
-    <h2>Sondeo registrado</h2>
+    <h2 id="exitoTit">Sondeo registrado</h2>
     <div>Folio</div>
     <div class="folio" id="folio"></div>
     <p>El sondeo quedó registrado en la App I+D. El Departamento de Investigación y Desarrollo dará seguimiento a la información. Gracias por su colaboración.</p>
@@ -207,11 +246,11 @@ function llamar(accion, datos) {
   var $$ = function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
   var form = $('#f'), CFG = null, CODIGO = '';
   var CLAVE_BORRADOR = 'solarever_sondeo_borrador_v1', CLAVE_CODIGO = 'solarever_sondeo_codigo', CLAVE_PERSONA = 'solarever_sondeo_persona';
-  var AYUDA = { 'Comodidad': 'Actividades que consumen tiempo, resultan incómodas u obligan a improvisar durante el uso o la instalación del sistema.',
-    'Costos': 'Gastos no previstos, compras adicionales y dudas sobre el ahorro o el rendimiento económico del sistema.',
-    'Eficiencia': 'Situaciones en las que el sistema genera o respalda menos energía de lo esperado y la forma en que el cliente lo detecta.',
+  var AYUDA = { 'Comodidad': 'Actividades que consumen tiempo, resultan incómodas u obligan a improvisar en los proyectos de instalación: diseño, cotización, montaje, puesta en marcha o atención posterior.',
+    'Costos': 'Gastos no previstos, compras adicionales y dudas sobre el ahorro o la generación real de las instalaciones, antes, durante o después de instalarlas.',
+    'Eficiencia': 'Situaciones en las que las instalaciones generan o respaldan menos energía de lo esperado y la forma en que se detecta.',
     'Instalación y mantenimiento': 'Actividades que exceden el tiempo planeado, piezas o herramientas improvisadas y servicios recurrentes.',
-    'Seguridad y confianza': 'Dudas, preocupaciones y aspectos del sistema que el cliente no comprende o en los que no confía.',
+    'Seguridad y confianza': 'Dudas, preocupaciones y aspectos de los equipos o de las instalaciones que el instalador o su cliente no comprende o en los que no confía.',
     'Cierre': 'Preguntas para concluir la entrevista.' };
   function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); if(v===null) localStorage.removeItem(k); else localStorage.setItem(k,v);}catch(e){ return null; } }
@@ -234,6 +273,44 @@ function llamar(accion, datos) {
     }).join('');
   }
 
+  function modo(){ return valorChip('modalidad') || 'Completo'; }
+  function ejesIdea(){ return CFG.ejes.map(function(g){ return g.eje; }).filter(function(e){ return e !== 'Cierre'; }); }
+  function bloqueIdea(v){
+    v = v || {};
+    var d = document.createElement('div'); d.className = 'bloque idea';
+    d.innerHTML = '<h3>Idea o necesidad</h3><button type="button" class="quitar">Quitar</button>' +
+      '<label class="campo">Sección a la que corresponde <span class="req">*</span><select class="i-eje"><option value="">Seleccione…</option>' + ejesIdea().map(function(e){ return '<option'+(e===v.eje?' selected':'')+'>'+esc(e)+'</option>'; }).join('') + '</select></label>' +
+      '<label class="campo">¿Qué comentó el cliente? <span class="req">*</span><textarea class="i-idea" placeholder="Registre las palabras del cliente">'+esc(v.idea||'')+'</textarea></label>' +
+      '<label class="campo">Cita textual <span class="opc">(opcional)</span><input type="text" class="i-cita" value="'+esc(v.cita||'')+'"></label>' +
+      '<label class="campo">¿Qué problema le resolvería? <span class="opc">(opcional)</span><input type="text" class="i-problema" value="'+esc(v.problema||'')+'" placeholder="Ejemplo: reducir el tiempo de instalación"></label>' +
+      '<label class="recordar" style="margin:6px 0 0"><input type="checkbox" class="i-seg"'+(v.seguridad==='Sí'?' checked':'')+'> Implica un riesgo de seguridad (calentamiento, olor a quemado, arco eléctrico, partes energizadas expuestas, desprendimiento de estructura o módulos)</label>';
+    $('.quitar', d).addEventListener('click', function(){ d.remove(); numerarIdeas(); guardarBorrador(); });
+    $('#ideas').appendChild(d); numerarIdeas();
+  }
+  function numerarIdeas(){
+    var bs = $$('#ideas .bloque');
+    bs.forEach(function(b, i){ $('h3', b).textContent = 'Idea o necesidad ' + (i + 1); $('.quitar', b).style.display = bs.length > 1 ? '' : 'none'; });
+  }
+  function filaOtro(v){
+    v = v || {};
+    var d = document.createElement('div'); d.className = 'fila3 otro';
+    d.innerHTML = '<label class="campo">Nombre del cliente<input type="text" class="o-nombre" value="'+esc(v.nombre||'')+'" autocomplete="off"></label>' +
+      '<label class="campo">Empresa <span class="opc">(opcional)</span><input type="text" class="o-empresa" value="'+esc(v.empresa||'')+'" autocomplete="off"></label>' +
+      '<label class="campo">Teléfono <span class="opc">(opcional)</span><input type="tel" class="o-tel" inputmode="tel" value="'+esc(v.telefono||'')+'" autocomplete="off"></label>' +
+      '<button type="button" class="quitar">Quitar</button>';
+    $('.quitar', d).addEventListener('click', function(){ d.remove(); guardarBorrador(); });
+    $('#otros').appendChild(d);
+  }
+  function aplicarModo(){
+    var b = modo() === 'Breve';
+    $('#breve').style.display = b ? '' : 'none';
+    $('#ejes').style.display = b ? 'none' : '';
+    $('#lineamientos').style.display = b ? 'none' : '';
+    if(b && !$$('#ideas .bloque').length) bloqueIdea();
+    $('#enviar').textContent = b ? 'Enviar registro' : 'Enviar sondeo';
+    progreso();
+  }
+
   function datos(){
     var fd = new FormData(form), r = {};
     CFG.ejes.forEach(function(g){ g.preguntas.forEach(function(p){ r[p.k] = (fd.get('r_'+p.k)||'').trim(); }); });
@@ -242,7 +319,9 @@ function llamar(accion, datos) {
       equipos: (fd.get('equipos')||'').trim(),
       cliente: { nombre: (fd.get('clienteNombre')||'').trim(), empresa: (fd.get('clienteEmpresa')||'').trim(), telefono: (fd.get('clienteTelefono')||'').trim(),
         ciudad: (fd.get('clienteCiudad')||'').trim(), estado: fd.get('clienteEstado')||'', contactable: !!fd.get('contactable') },
-      respuestas: r };
+      respuestas: r, modalidad: modo(), noIdentificados: (fd.get('noIdentificados')||'').trim(),
+      ideas: $$('#ideas .bloque').map(function(b){ return { eje: $('.i-eje', b).value, idea: $('.i-idea', b).value.trim(), cita: $('.i-cita', b).value.trim(), problema: $('.i-problema', b).value.trim(), seguridad: $('.i-seg', b).checked ? 'Sí' : 'No' }; }),
+      otrosClientes: $$('#otros .otro').map(function(o){ return { nombre: $('.o-nombre', o).value.trim(), empresa: $('.o-empresa', o).value.trim(), telefono: $('.o-tel', o).value.trim() }; }).filter(function(x){ return x.nombre || x.empresa || x.telefono; }) };
   }
 
   function guardarBorrador(){
@@ -264,6 +343,9 @@ function llamar(accion, datos) {
     setV('equipos', d.equipos);
     if(d.cliente){ setV('clienteNombre', d.cliente.nombre); setV('clienteEmpresa', d.cliente.empresa); setV('clienteTelefono', d.cliente.telefono); setV('clienteCiudad', d.cliente.ciudad); setV('clienteEstado', d.cliente.estado); form.elements.contactable.checked = d.cliente.contactable !== false; }
     if(d.respuestas) Object.keys(d.respuestas).forEach(function(k){ setV('r_'+k, d.respuestas[k]); });
+    setC('modalidad', d.modalidad); setV('noIdentificados', d.noIdentificados);
+    (d.ideas||[]).forEach(function(x){ if(x.eje || x.idea) bloqueIdea(x); });
+    (d.otrosClientes||[]).forEach(function(x){ filaOtro(x); });
   }
 
   function faltantes(d){
@@ -278,6 +360,20 @@ function llamar(accion, datos) {
     if(!d.cliente.nombre) marca('[name=clienteNombre]','Nombre del cliente o contacto');
     if(!d.cliente.ciudad) marca('[name=clienteCiudad]','Ciudad');
     if(!d.tipoCliente) marca('#tipoCliente','Tipo de cliente');
+    if(d.modalidad === 'Breve'){
+      var conDato = 0;
+      $$('#ideas .bloque').forEach(function(b, i){
+        var eje = $('.i-eje', b).value, idea = $('.i-idea', b).value.trim();
+        if(!eje && !idea && $$('#ideas .bloque').length > 1) return;
+        if(!eje){ $('.i-eje', b).classList.add('invalido'); f.push('sección de la idea ' + (i + 1)); }
+        if(!idea){ $('.i-idea', b).classList.add('invalido'); f.push('descripción de la idea ' + (i + 1)); }
+        conDato++;
+      });
+      if(!conDato) f.push('al menos una idea o necesidad');
+      $$('#otros .otro').forEach(function(o, i){ var n = $('.o-nombre', o); if(!n.value.trim() && ($('.o-empresa', o).value.trim() || $('.o-tel', o).value.trim())){ n.classList.add('invalido'); f.push('nombre del otro cliente ' + (i + 1)); } });
+      if(d.noIdentificados && !/^\d{1,3}$/.test(d.noIdentificados)){ $('[name=noIdentificados]').classList.add('invalido'); f.push('clientes no identificados (solo números)'); }
+      return f;
+    }
     CFG.ejes.forEach(function(g){
       if(g.eje === 'Cierre') return;
       var ok = g.preguntas.some(function(p){ return d.respuestas[p.k]; });
@@ -286,6 +382,7 @@ function llamar(accion, datos) {
     return f;
   }
   function progreso(){
+    if(modo() === 'Breve'){ var n = $$('#ideas .bloque').filter(function(b){ return $('.i-idea', b).value.trim(); }).length; $('#progreso').textContent = 'Registro breve · ideas descritas: ' + n; return; }
     var d = datos(), ejes = CFG.ejes.filter(function(g){ return g.eje!=='Cierre'; });
     var listos = ejes.filter(function(g){ return g.preguntas.some(function(p){ return d.respuestas[p.k]; }); }).length;
     $('#progreso').textContent = 'Secciones respondidas: '+listos+' de '+ejes.length;
@@ -294,6 +391,15 @@ function llamar(accion, datos) {
     var h = '<dt>Aplicado por</dt><dd>'+esc(d.persona)+(d.puesto?' · '+esc(d.puesto):'')+' · '+esc(d.area)+'</dd>' +
       '<dt>Cliente</dt><dd>'+esc(d.cliente.nombre)+(d.cliente.empresa?' · '+esc(d.cliente.empresa):'')+' · '+esc(d.cliente.ciudad)+(d.cliente.estado?', '+esc(d.cliente.estado):'')+' · '+esc(d.tipoCliente)+'</dd>' +
       '<dt>Fecha y medio de contacto</dt><dd>'+esc(d.fecha)+' · '+esc(d.medio)+'</dd>';
+    h = '<dt>Tipo de registro</dt><dd>'+(d.modalidad === 'Breve' ? 'Registro breve de una idea o necesidad' : 'Sondeo completo')+'</dd>' + h;
+    if(d.modalidad === 'Breve'){
+      d.ideas.filter(function(x){ return x.idea; }).forEach(function(x, i){
+        h += '<dt>Idea '+(i+1)+' · '+esc(x.eje)+(x.seguridad==='Sí'?' · riesgo de seguridad':'')+'</dt><dd>'+esc(x.idea)+(x.problema?'\nProblema que resolvería: '+esc(x.problema):'')+(x.cita?'\nCita: “'+esc(x.cita)+'”':'')+'</dd>';
+      });
+      if(d.otrosClientes.length) h += '<dt>Otros clientes (por confirmar)</dt><dd>'+d.otrosClientes.map(function(o){ return '• '+esc(o.nombre)+(o.empresa?' · '+esc(o.empresa):''); }).join('\n')+'</dd>';
+      if(d.noIdentificados) h += '<dt>Clientes no identificados</dt><dd>'+esc(d.noIdentificados)+'</dd>';
+      return h;
+    }
     CFG.ejes.forEach(function(g){
       var rs = g.preguntas.filter(function(p){ return d.respuestas[p.k]; });
       if(rs.length) h += '<dt>'+esc(g.eje)+'</dt><dd>'+rs.map(function(p){ return '• '+esc(d.respuestas[p.k]); }).join('\n')+'</dd>';
@@ -310,6 +416,11 @@ function llamar(accion, datos) {
     form.elements.fecha.value = hoy(); form.elements.fecha.max = hoy();
     cargarBorrador();
     form.addEventListener('input', guardarBorrador); form.addEventListener('change', guardarBorrador);
+    form.addEventListener('input', function(e){ if(e.target && e.target.classList) e.target.classList.remove('invalido'); });
+    $$('input[name=modalidad]').forEach(function(x){ x.addEventListener('change', aplicarModo); });
+    $('#masIdea').addEventListener('click', function(){ bloqueIdea(); guardarBorrador(); });
+    $('#masOtro').addEventListener('click', function(){ filaOtro(); $('#otros .otro:last-child .o-nombre').focus(); });
+    aplicarModo();
     form.elements.persona.addEventListener('change', function(){
       var n = this.value.trim().toLowerCase(), p = (CFG.personas||[]).filter(function(x){ return x.nombre.toLowerCase()===n; })[0];
       if(!p) return;
@@ -355,12 +466,12 @@ function llamar(accion, datos) {
       ls(CLAVE_PERSONA, JSON.stringify({ persona: d.persona, puesto: d.puesto, area: d.area }));
       modal.classList.remove('abierto');
       form.style.display='none'; $('#barra').style.display='none'; error('');
-      $('#folio').textContent = r.folio; $('#exito').style.display='block';
+      $('#folio').textContent = r.folio; $('#exitoTit').textContent = d.modalidad === 'Breve' ? 'Registro breve enviado' : 'Sondeo registrado'; $('#exito').style.display='block';
       window.scrollTo(0,0);
     }).catch(function(err){
       modal.classList.remove('abierto');
       error('No fue posible enviar el sondeo: ' + err.message + '. La información permanece guardada en este dispositivo; intente nuevamente.');
-    }).then(function(){ enviando = false; b.disabled = false; b.textContent = 'Enviar sondeo'; });
+    }).then(function(){ enviando = false; b.disabled = false; b.textContent = modo() === 'Breve' ? 'Enviar registro' : 'Enviar sondeo'; });
   });
   $('#otro').addEventListener('click', function(){ window.location.reload(); });
 
