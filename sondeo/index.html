@@ -169,6 +169,7 @@
         <label class="campo">Tipo de instalación <span class="opc">(opcional)</span><select id="tipoInstalacion" name="tipoInstalacion"></select></label>
         <label class="campo full">Equipos y antigüedad <span class="opc">(opcional)</span><input type="text" name="equipos" placeholder="Equipos que instala con más frecuencia y antigüedad de sus instalaciones. Ejemplo: inversores híbridos de 6 kW; de 1 a 3 años"></label>
         <label class="recordar full"><input type="checkbox" name="contactable" checked> El cliente autoriza ser contactado nuevamente por el Departamento de Investigación y Desarrollo</label>
+        <label class="campo full">Día y horario en que prefiere que lo contacten <span class="opc">(opcional)</span><input type="text" name="horarioContacto" maxlength="150" placeholder="Ejemplo: martes o jueves por la tarde"></label>
       </div>
     </section>
 
@@ -321,7 +322,7 @@ function llamar(accion, datos) {
       equipos: (fd.get('equipos')||'').trim(),
       cliente: { nombre: (fd.get('clienteNombre')||'').trim(), empresa: (fd.get('clienteEmpresa')||'').trim(), telefono: (fd.get('clienteTelefono')||'').trim(),
         ciudad: (fd.get('clienteCiudad')||'').trim(), estado: fd.get('clienteEstado')||'', contactable: !!fd.get('contactable') },
-      respuestas: r, modalidad: modo(), noIdentificados: (fd.get('noIdentificados')||'').trim(),
+      respuestas: r, modalidad: modo(), horarioContacto: (fd.get('horarioContacto')||'').trim(), noIdentificados: (fd.get('noIdentificados')||'').trim(),
       ideas: $$('#ideas .bloque').map(function(b){ return { eje: $('.i-eje', b).value, idea: $('.i-idea', b).value.trim(), cita: $('.i-cita', b).value.trim(), problema: $('.i-problema', b).value.trim(), seguridad: $('.i-seg', b).checked ? 'Sí' : 'No' }; }),
       otrosClientes: $$('#otros .otro').map(function(o){ return { nombre: $('.o-nombre', o).value.trim(), empresa: $('.o-empresa', o).value.trim(), telefono: $('.o-tel', o).value.trim() }; }).filter(function(x){ return x.nombre || x.empresa || x.telefono; }) };
   }
@@ -345,7 +346,7 @@ function llamar(accion, datos) {
     setV('equipos', d.equipos);
     if(d.cliente){ setV('clienteNombre', d.cliente.nombre); setV('clienteEmpresa', d.cliente.empresa); setV('clienteTelefono', d.cliente.telefono); setV('clienteCiudad', d.cliente.ciudad); setV('clienteEstado', d.cliente.estado); form.elements.contactable.checked = d.cliente.contactable !== false; }
     if(d.respuestas) Object.keys(d.respuestas).forEach(function(k){ setV('r_'+k, d.respuestas[k]); });
-    setC('modalidad', d.modalidad); setV('noIdentificados', d.noIdentificados);
+    setC('modalidad', d.modalidad); setV('noIdentificados', d.noIdentificados); setV('horarioContacto', d.horarioContacto);
     (d.ideas||[]).forEach(function(x){ if(x.eje || x.idea) bloqueIdea(x); });
     (d.otrosClientes||[]).forEach(function(x){ filaOtro(x); });
   }
@@ -393,6 +394,7 @@ function llamar(accion, datos) {
     var h = '<dt>Aplicado por</dt><dd>'+esc(d.persona)+(d.puesto?' · '+esc(d.puesto):'')+' · '+esc(d.area)+'</dd>' +
       '<dt>Cliente</dt><dd>'+esc(d.cliente.nombre)+(d.cliente.empresa?' · '+esc(d.cliente.empresa):'')+' · '+esc(d.cliente.ciudad)+(d.cliente.estado?', '+esc(d.cliente.estado):'')+' · '+esc(d.tipoCliente)+'</dd>' +
       '<dt>Fecha y medio de contacto</dt><dd>'+esc(d.fecha)+' · '+esc(d.medio)+'</dd>';
+    if(d.horarioContacto) h += '<dt>Horario preferido de contacto</dt><dd>'+esc(d.horarioContacto)+'</dd>';
     h = '<dt>Tipo de registro</dt><dd>'+(d.modalidad === 'Breve' ? 'Registro breve de una idea o necesidad' : 'Sondeo completo')+'</dd>' + h;
     if(d.modalidad === 'Breve'){
       d.ideas.filter(function(x){ return x.idea; }).forEach(function(x, i){
